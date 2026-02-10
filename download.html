@@ -1,0 +1,352 @@
+---
+permalink: /download/
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下载</title>
+    <link rel="icon" href="/favicon.ico?v=1" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico?v=1" type="image/x-icon">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: opacity 0.3s;
+        }
+
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .download-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .download-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .version-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .version-badge {
+            background: #4CAF50;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.6em;
+        }
+
+        .version-badge.beta {
+            background: #ff9800;
+        }
+
+        .description {
+            opacity: 0.9;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: white;
+            color: #764ba2;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .changelog {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .changelog ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .changelog li {
+            margin: 5px 0;
+        }
+
+        .install-guide {
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .install-guide h3 {
+            margin-bottom: 15px;
+        }
+
+        .install-guide ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .install-guide a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        .install-guide a:hover {
+            text-decoration: underline;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #764ba2;
+        }
+
+        .modal-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            margin: 5px;
+            background: #764ba2;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .modal-btn:hover {
+            background: #5a3a8a;
+        }
+
+        .modal-btn.secondary {
+            background: #ccc;
+            color: #333;
+        }
+
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← 返回主页</a>
+        
+        <h1>📦 下载中心</h1>
+        <p class="subtitle">选择适合你的版本</p>
+
+        <div class="download-card">
+            <div class="version-title">
+                AM安全版
+                <span class="version-badge">推荐</span>
+            </div>
+            <p class="description">
+                显示弹窗后，辅助注入，点击x即可体验到飞一样的感觉
+            </p>
+            <button class="download-btn" onclick="installScript('files/AM2026_02_10.user.js', 'AM安全版')">
+                ⬇️ 安装安全版
+            </button>
+            <div class="changelog">
+                <strong>更新日志：</strong>
+                <ul>
+                    <li>✨ 支持一切练习</li>
+                    <li>✨ 去除了按钮，省去了按钮对使用者的暴露</li>
+                    <li>🐛 重复点击的BUG</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="download-card">
+            <div class="version-title">
+                AM工具稳定版
+                <span class="version-badge beta">Beta</span>
+            </div>
+            <p class="description">
+                爆破AM学生端密码
+            </p>
+            <button class="download-btn" onclick="installScript('files/password2026_02_10.user.js', 'AM工具稳定版')">
+                ⬇️ 安装测试版
+            </button>
+            <div class="changelog">
+                <strong>更新日志：</strong>
+                <ul>
+                    <li>✨ 输入用户名即刻开始破解</li>
+                    <li>✨ 优化破解速度</li>
+                    <li>⚠️ 需要填写完整的用户名</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="download-card">
+            <div class="version-title">
+                Blooket辅助
+                <span class="version-badge beta">Beta</span>
+            </div>
+            <p class="description">
+                Blooket全功能作弊工具
+            </p>
+            <button class="download-btn" onclick="installScript('files/Blooket2026_02_10.user.js', 'Blooket辅助')">
+                ⬇️ 安装全功能版
+            </button>
+            <div class="changelog">
+                <strong>更新日志：</strong>
+                <ul>
+                    <li>✨ 功能的全中文解释，方便用户理解</li>
+                    <li>✨ 添加了UI的一键隐藏</li>
+                    <li>🐛 优化了使用的流畅性</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="install-guide">
+            <h3>📖 安装指南</h3>
+            <ol>
+                <li>确保已安装 <a href="https://www.tampermonkey.net/" target="_blank">篡改猴 (Tampermonkey)</a> 扩展</li>
+                <li>点击上面的"安装"按钮</li>
+                <li>浏览器会自动跳转到篡改猴的安装页面</li>
+                <li>点击"安装"即可完成</li>
+            </ol>
+        </div>
+    </div>
+
+    <div id="installModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">×</span>
+            <h2>🚀 准备安装</h2>
+            <p id="modalText">即将安装脚本...</p>
+            <button class="modal-btn" onclick="confirmInstall()">立即安装</button>
+            <button class="modal-btn secondary" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+
+    <script>
+        let currentScriptUrl = '';
+        let currentVersion = '';
+
+        function installScript(url, version) {
+            currentScriptUrl = url;
+            currentVersion = version;
+            document.getElementById('modalText').textContent = 
+                `你即将安装 ${version}，请确保已安装篡改猴扩展。`;
+            document.getElementById('installModal').style.display = 'flex';
+        }
+        function confirmInstall() {
+            const fullUrl = window.location.origin + '/' + currentScriptUrl;
+            const tmUrl = 'tampermonkey://install-url?url=' + encodeURIComponent(fullUrl);
+            window.location.href = tmUrl;
+            setTimeout(() => {
+                window.open(fullUrl, '_blank');
+            }, 3000);
+            closeModal();
+        }
+        function closeModal() {
+            document.getElementById('installModal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById('installModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
