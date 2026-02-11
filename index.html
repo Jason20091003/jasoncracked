@@ -22,15 +22,6 @@
   <style>.top{min-height:300px;display:flex;position:relative;justify-content:center;align-items:center;flex-direction:column}.top p{margin-bottom:10px}.icon-group{display:flex;flex-wrap:wrap;justify-content:center}.icon-group>div{margin:10px;display:flex;align-items:center}.icon-group .icon{height:1rem;width:1rem}.capsule{height:60px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;width:60%;position:relative;margin-bottom:1rem}.capsule>div{height:40px;display:flex;justify-content:center;align-items:center;margin:10px}.capsule .is-left{width:40px;border-radius:50%;padding:3px}.capsule .is-left svg{width:24px;height:24px}.capsule .is-mid{position:absolute;left:60px;right:60px;bottom:0;top:0;display:flex;justify-content:center;align-items:center;font-weight:700}.capsule .is-right{font-size:.8rem;font-weight:bolder}.search{padding:1rem;border-radius:10px;display:flex;justify-content:space-between;align-items:center}.search .is-middle{width:100%;height:36px;padding:0 1rem}.search .is-middle input{background:0 0;width:100%;height:100%;display:inline-block;box-shadow:none;outline:0;border:none;color:inherit;border-bottom:1px solid;text-align:center;font-size:1rem;font-weight:700;letter-spacing:2px}input:active,input:focus,input:hover{outline:0}.search .icon{width:100%!important;height:100%!important}.search .is-left,.search .is-right{height:33px;width:33px}@keyframes bounceIn{0%{opacity:0;transform:scale(.3) translate3d(0,0,0)}50%{opacity:.9;transform:scale(1.1)}80%{opacity:1;transform:scale(.89)}100%{opacity:1;transform:scale(1) translate3d(0,0,0)}}.theme-dark .bg{background-color:var(--dark-theme-background)}.theme-light .bg{background-color:var(--light-theme-background)}.theme-dark .bg1{background-color:var(--dark-theme-background1)}.theme-light .bg1{background-color:var(--light-theme-background1)}.section{min-height:390px;padding-top:var(--padding);padding-bottom:var(--padding);padding:3rem .5rem!important;position:relative}.go-button{background:0 0;width:120px;display:inline-block;margin-top:var(--margin);margin-bottom:var(--margin)}.book-card{width:100px;text-align:center}.book-card p{font-size:.8rem}.down{position:absolute;bottom:1rem;left:0;right:0;animation:float-up-down 1.5s ease-in-out infinite}.btn-title{height:23px;font-size:.8rem;width:53px;text-align:center}@keyframes float-up-down{from{transform:translateY(0)}50%{transform:translateY(-10px)}to{transform:translateY(0)}}img{border-radius:var(--radius)}</style>
  </head>
  <body style="display:none">
-  <script>
-    // 自动跳转到线上原版页面（保留 query 参数、hash 等）
-    (function() {
-      const currentPath = window.location.pathname.replace(/\.html$/, '');  // 去掉 .html
-      const targetUrl = 'https://wordforest.cn' + currentPath + window.location.search + window.location.hash;
-      console.log('本地 HTML 跳转到线上原版：' + targetUrl);
-      window.location.replace(targetUrl);
-    })();
-  </script>
   <header style="box-shadow:none;background:0 0" class="between p1">
    <div id="switchThemeBtnBox"></div>
    <div>
