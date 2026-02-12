@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JL单词翻译器</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      padding: 40px 0;
+    }
+    
+    header h1 {
+      font-size: 2.5rem;
+      color: #00d9ff;
+      margin-bottom: 10px;
+    }
+    
+    header p {
+      color: #888;
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    
+    .search-box input {
+      flex: 1;
+      padding: 15px 20px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      background: #16213e;
+      color: #fff;
+      font-size: 1.1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    
+    .search-box input:focus {
+      border-color: #00d9ff;
+    }
+    
+    .search-box button {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      background: #00d9ff;
+      color: #1a1a2e;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .search-box button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 217, 255, 0.3);
+    }
+    
+    .search-box button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .result {
+      background: #16213e;
+      border-radius: 15px;
+      padding: 30px;
+      display: none;
+    }
+    
+    .result.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .word-header {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .word-title {
+      font-size: 2.5rem;
+      color: #00d9ff;
+      font-weight: bold;
+    }
+    
+    .phonetic {
+      color: #888;
+      font-size: 1.1rem;
+    }
+    
+    .phonetic span {
+      margin-right: 15px;
+    }
+    
+    .section {
+      margin-bottom: 25px;
+    }
+    
+    .section-title {
+      font-size: 1rem;
+      color: #00d9ff;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #333;
+    }
+    
+    .meanings {
+      line-height: 1.8;
+    }
+    
+    .meaning-item {
+      margin-bottom: 8px;
+      padding-left: 15px;
+      position: relative;
+    }
+    
+    .meaning-item::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #00d9ff;
+    }
+    
+    .sentences {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .sentence {
+      background: #0f3460;
+      padding: 15px;
+      border-radius: 10px;
+      border-left: 3px solid #00d9ff;
+    }
+    
+    .sentence-en {
+      color: #ddd;
+      margin-bottom: 5px;
+      line-height: 1.6;
+    }
+    
+    .sentence-zh {
+      color: #888;
+      font-size: 0.95rem;
+    }
+    
+    .error {
+      background: #e94560;
+      color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      display: none;
+    }
+    
+    .error.show {
+      display: block;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      display: none;
+    }
+    
+    .loading.show {
+      display: block;
+    }
+    
+    .loading::after {
+      content: "";
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #00d9ff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>JL词典</h1>
+      <p>简洁美观的英语词典</p>
+    </header>
+    
+    <div class="search-box">
+      <input 
+        type="text" 
+        id="wordInput" 
+        placeholder="输入单词" 
+        autocomplete="off"
+      />
+      <button onclick="searchWord()" id="searchBtn">查询</button>
+    </div>
+    
+    <div class="loading" id="loading">正在查询</div>
+    
+    <div class="error" id="error"></div>
+    
+    <div class="result" id="result">
+      <div class="word-header">
+        <span class="word-title" id="wordTitle"></span>
+        <span class="phonetic" id="phonetic"></span>
+      </div>
+      
+      <div class="section" id="meaningsSection">
+        <div class="section-title">释义</div>
+        <div class="meanings" id="meanings"></div>
+      </div>
+      
+      <div class="section" id="sentencesSection">
+        <div class="section-title">例句</div>
+        <div class="sentences" id="sentences"></div>
+      </div>
+    </div>
+    
+    <div class="empty-state" id="emptyState">
+      <p>输入单词开始查询</p>
+    </div>
+  </div>
+
+  <script>
+    // ====== 配置：你的 Cloudflare Worker 地址 ======
+    const API_BASE = 'https://divine-hat-9ab4.luz715279.workers.dev';
+    
+    // 回车键搜索
+    document.getElementById('wordInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') searchWord();
+    });
+    
+    async function searchWord() {
+      const input = document.getElementById('wordInput');
+      const word = input.value.trim().toLowerCase();
+      
+      if (!word) {
+        showError('请输入单词');
+        return;
+      }
+      
+      // 显示加载，隐藏其他
+      document.getElementById('loading').classList.add('show');
+      document.getElementById('error').classList.remove('show');
+      document.getElementById('result').classList.remove('show');
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('searchBtn').disabled = true;
+      
+      try {
+        // 调用你的 Worker 代理
+        const response = await fetch(`${API_BASE}/api/dict/en/zh/${encodeURIComponent(word)}`);
+        
+        if (!response.ok) {
+          throw new Error(response.status === 404 ? '未找到该单词' : '查询失败');
+        }
+        
+        const data = await response.json();
+        displayResult(data);
+        
+      } catch (err) {
+        showError(err.message || '网络错误，请稍后重试');
+      } finally {
+        document.getElementById('loading').classList.remove('show');
+        document.getElementById('searchBtn').disabled = false;
+      }
+    }
+    
+    function displayResult(data) {
+      // 单词标题
+      document.getElementById('wordTitle').textContent = data.word || 'Unknown';
+      
+      // 音标
+      const phoneticParts = [];
+      if (data.usPhonetic) phoneticParts.push(`美 [${data.usPhonetic}]`);
+      if (data.ukPhonetic) phoneticParts.push(`英 [${data.ukPhonetic}]`);
+      document.getElementById('phonetic').innerHTML = phoneticParts.map(p => `<span>${p}</span>`).join('');
+      
+      // 释义
+      const meaningsDiv = document.getElementById('meanings');
+      meaningsDiv.innerHTML = '';
+      
+      if (data.translations?.meanings) {
+        const meanings = data.translations.meanings;
+        for (const [pos, defs] of Object.entries(meanings)) {
+          const item = document.createElement('div');
+          item.className = 'meaning-item';
+          item.innerHTML = `<strong>${pos}</strong> ${Array.isArray(defs) ? defs.join('；') : defs}`;
+          meaningsDiv.appendChild(item);
+        }
+      } else {
+        meaningsDiv.innerHTML = '<div class="meaning-item">暂无释义</div>';
+      }
+      
+      // 例句
+      const sentencesDiv = document.getElementById('sentences');
+      sentencesDiv.innerHTML = '';
+      
+      if (data.sentences && data.sentences.length > 0) {
+        document.getElementById('sentencesSection').style.display = 'block';
+        data.sentences.forEach(sent => {
+          const div = document.createElement('div');
+          div.className = 'sentence';
+          div.innerHTML = `
+            <div class="sentence-en">${escapeHtml(sent.content)}</div>
+            <div class="sentence-zh">${escapeHtml(sent.translation)}</div>
+          `;
+          sentencesDiv.appendChild(div);
+        });
+      } else {
+        document.getElementById('sentencesSection').style.display = 'none';
+      }
+      
+      // 显示结果
+      document.getElementById('result').classList.add('show');
+    }
+    
+    function showError(msg) {
+      const errorDiv = document.getElementById('error');
+      errorDiv.textContent = msg;
+      errorDiv.classList.add('show');
+      document.getElementById('emptyState').style.display = 'none';
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生已完成清单</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .title {
+            font-size: 32px;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        
+        .stats {
+            font-size: 18px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .stats-number {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 24px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .edit-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .edit-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .edit-btn.add {
+            background: #667eea;
+            color: white;
+        }
+        
+        .edit-btn.add:hover {
+            background: #5a6fd6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .edit-btn.mode {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .edit-btn.mode:hover {
+            background: #e0e0e0;
+        }
+        
+        .edit-btn.mode.active {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .edit-btn.reset {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .edit-btn.reset:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .add-form {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .add-form.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .add-form input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .add-form input:focus {
+            border-color: #667eea;
+        }
+        
+        .add-form-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .add-form button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .add-form .confirm {
+            background: #667eea;
+            color: white;
+        }
+        
+        .add-form .confirm:hover {
+            background: #5a6fd6;
+        }
+        
+        .add-form .cancel {
+            background: #e0e0e0;
+            color: #666;
+        }
+        
+        .add-form .cancel:hover {
+            background: #d0d0d0;
+        }
+        
+        .list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .item {
+            font-size: 14px;
+            color: #ff4757;
+            cursor: pointer;
+            padding: 10px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            user-select: none;
+            line-height: 1.4;
+            background: #fff;
+            border: 2px solid #ff4757;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .item:hover {
+            background: #ff4757;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+        
+        .item.completed {
+            color: #fff;
+            background: #95a5a6;
+            border-color: #95a5a6;
+            text-decoration: line-through;
+            text-decoration-color: rgba(255, 255, 255, 0.6);
+            text-decoration-thickness: 2px;
+        }
+        
+        .item.completed:hover {
+            background: #7f8c8d;
+            border-color: #7f8c8d;
+        }
+        
+        /* 编辑模式样式 */
+        .edit-mode .item {
+            padding-right: 40px;
+        }
+        
+        .edit-mode .item::after {
+            content: "✕";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .edit-mode .item:hover::after {
+            opacity: 1;
+        }
+        
+        .edit-mode .item:hover {
+            background: #ff4757;
+            color: white;
+        }
+        
+        /* 修改模式 - 双击编辑 */
+        .item.editing {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            padding: 0;
+        }
+        
+        .item input {
+            width: 100%;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            color: inherit;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .footer .edit-hint {
+            color: #667eea;
+            font-weight: 500;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .edit-mode .footer .edit-hint {
+            display: block;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+                border-radius: 16px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+            
+            .stats {
+                font-size: 16px;
+            }
+            
+            .item {
+                font-size: 13px;
+                padding: 8px 14px;
+            }
+            
+            .edit-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">人生已完成清单</div>
+            <div class="stats">
+                已完成：<span class="stats-number" id="stats">0/185</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+        </div>
+        
+        <div class="edit-controls">
+            <button class="edit-btn add" onclick="toggleAddForm()">+ 新增项目</button>
+            <button class="edit-btn mode" id="editModeBtn" onclick="toggleEditMode()">编辑模式</button>
+            <button class="edit-btn reset" onclick="resetToDefault()">恢复默认</button>
+        </div>
+        
+        <div class="add-form" id="addForm">
+            <input type="text" id="newItemInput" placeholder="输入新项目..." maxlength="50">
+            <div class="add-form-buttons">
+                <button class="cancel" onclick="toggleAddForm()">取消</button>
+                <button class="confirm" onclick="addItem()">添加</button>
+            </div>
+        </div>
+        
+        <div class="list" id="list"></div>
+        
+        <div class="footer">
+            <p>点击项目标记为已完成 ✓</p>
+            <p class="edit-hint">点击项目删除 ✕ | 双击项目修改文字</p>
+        </div>
+    </div>
+
+    <script>
+        // 默认项目 - 修改这里
+        const defaultItems = [
+            "GPA:5.0"
+        ];
+
+        // 从 localStorage 读取或初始化
+        let items = JSON.parse(localStorage.getItem('lifeListItems')) || [...defaultItems];
+        let completed = JSON.parse(localStorage.getItem('completedItems') || '[]');
+        let editMode = false;
+        let editingIndex = -1;
+        
+        function saveItems() {
+            localStorage.setItem('lifeListItems', JSON.stringify(items));
+            localStorage.setItem('completedItems', JSON.stringify(completed));
+        }
+        
+        function renderList() {
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                
+                if (editingIndex === index) {
+                    // 编辑状态
+                    div.classList.add('editing');
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = item;
+                    input.maxLength = 50;
+                    input.onblur = () => finishEdit(index, input.value);
+                    input.onkeypress = (e) => {
+                        if (e.key === 'Enter') {
+                            finishEdit(index, input.value);
+                        }
+                    };
+                    div.appendChild(input);
+                    setTimeout(() => input.focus(), 0);
+                } else {
+                    // 正常显示
+                    div.textContent = item;
+                    if (completed.includes(index)) {
+                        div.classList.add('completed');
+                    }
+                    
+                    // 普通模式：点击切换完成
+                    // 编辑模式：点击删除，双击编辑
+                    if (editMode) {
+                        div.ondblclick = (e) => {
+                            e.stopPropagation();
+                            startEdit(index);
+                        };
+                        div.onclick = () => deleteItem(index);
+                    } else {
+                        div.onclick = () => toggleItem(index);
+                    }
+                }
+                
+                list.appendChild(div);
+            });
+            
+            updateStats();
+        }
+        
+        function toggleItem(index) {
+            if (editMode || editingIndex !== -1) return;
+            
+            const itemIndex = completed.indexOf(index);
+            if (itemIndex > -1) {
+                completed.splice(itemIndex, 1);
+            } else {
+                completed.push(index);
+            }
+            saveItems();
+            renderList();
+        }
+        
+        function toggleAddForm() {
+            const form = document.getElementById('addForm');
+            form.classList.toggle('show');
+            if (form.classList.contains('show')) {
+                document.getElementById('newItemInput').focus();
+            }
+        }
+        
+        function addItem() {
+            const input = document.getElementById('newItemInput');
+            const value = input.value.trim();
+            
+            if (!value) {
+                alert('请输入内容');
+                return;
+            }
+            
+            items.push(value);
+            input.value = '';
+            saveItems();
+            renderList();
+            toggleAddForm();
+        }
+        
+        function toggleEditMode() {
+            editMode = !editMode;
+            const btn = document.getElementById('editModeBtn');
+            const body = document.body;
+            
+            if (editMode) {
+                btn.classList.add('active');
+                btn.textContent = '退出编辑';
+                body.classList.add('edit-mode');
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '编辑模式';
+                body.classList.remove('edit-mode');
+                editingIndex = -1;
+            }
+            renderList();
+        }
+        
+        function deleteItem(index) {
+            if (!editMode) return;
+            
+            if (confirm(`确定删除 "${items[index]}" 吗？`)) {
+                items.splice(index, 1);
+                // 调整 completed 索引
+                completed = completed
+                    .filter(i => i !== index)
+                    .map(i => i > index ? i - 1 : i);
+                saveItems();
+                renderList();
+            }
+        }
+        
+        function startEdit(index) {
+            if (!editMode) return;
+            editingIndex = index;
+            renderList();
+        }
+        
+        function finishEdit(index, newValue) {
+            const value = newValue.trim();
+            if (value) {
+                items[index] = value;
+                saveItems();
+            }
+            editingIndex = -1;
+            renderList();
+        }
+        
+        function resetToDefault() {
+            if (confirm('确定恢复默认清单？所有自定义修改将丢失！')) {
+                localStorage.removeItem('lifeListItems');
+                localStorage.removeItem('completedItems');
+                items = [...defaultItems];
+                completed = [];
+                saveItems();
+                renderList();
+            }
+        }
+        
+        function updateStats() {
+            const count = completed.length;
+            const total = items.length;
+            const percentage = total > 0 ? (count / total * 100).toFixed(1) : 0;
+            
+            document.getElementById('stats').textContent = `${count}/${total} (${percentage}%)`;
+            document.getElementById('progress').style.width = `${percentage}%`;
+        }
+        
+        // 初始化
+        renderList();
+    </script>
+</body>
+</html>
