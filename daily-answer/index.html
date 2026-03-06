@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>每日AP题目答案</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      color: #1a73e8;
+      margin-bottom: 16px;
+    }
+    .answer-item {
+      margin: 24px 0;
+      padding: 24px;
+      background: #f0f7ff;
+      border-left: 6px solid #1a73e8;
+      border-radius: 8px;
+      font-size: 1.05em;
+    }
+    .answer-item .meta {
+      color: #555;
+      font-size: 0.95em;
+      margin-bottom: 12px;
+    }
+    .answer-item h3 {
+      margin: 0 0 16px;
+      color: #1565c0;
+      font-size: 1.3em;
+    }
+    .options {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    #loading {
+      text-align: center;
+      padding: 80px 0;
+      color: #777;
+      font-size: 1.1em;
+    }
+    #error {
+      text-align: center;
+      padding: 40px;
+      color: #d32f2f;
+    }
+    .copy-btn {
+      margin-top: 16px;
+      padding: 8px 20px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95em;
+    }
+    .copy-btn:hover {
+      background: #0d47a1;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>每日AP题目答案</h1>
+
+  <div id="loading">正在加载所有历史答案……</div>
+  <div id="answers-list" style="display:none;"></div>
+  <div id="error" style="display:none;"></div>
+
+</div>
+
+<script>
+  const BIN_URL = "https://api.jsonbin.io/v3/b/69aa7927d0ea881f40f44720/latest";
+
+  fetch(BIN_URL)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      const answers = data.record.answers || [];
+
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("answers-list").style.display = "block";
+
+      if (answers.length === 0) {
+        document.getElementById("answers-list").innerHTML = '<p style="text-align:center; color:#e74c3c; font-size:1.1em;">暂无历史答案</p>';
+        return;
+      }
+
+      // 按 question_time 倒序（最新在上）
+      answers.sort((a, b) => new Date(b.question_time) - new Date(a.question_time));
+
+      let html = '';
+      answers.forEach((item, idx) => {
+        html += `
+          <div class="answer-item">
+            <div class="meta">更新时间：${item.update_time || '未知'}</div>
+            <div class="meta">题目日期：${item.question_time || '未知'}</div>
+            <h3>题目：${item.question_number || '未知'}</h3>
+            <div class="options">${(item.options || '暂无内容').replace(/\n/g, '<br>')}</div>
+            <button class="copy-btn" onclick="copyThis(${idx})">复制本条答案</button>
+          </div>
+        `;
+      });
+
+      document.getElementById("answers-list").innerHTML = html;
+    })
+    .catch(err => {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("error").style.display = "block";
+      document.getElementById("error").innerHTML = `加载失败：${err.message}<br>请检查网络或 Bin 是否公开。`;
+    });
+
+  function copyThis(index) {
+    const items = document.querySelectorAll('.answer-item');
+    const text = items[index].innerText
+      .replace(/复制本条答案/, '')
+      .replace(/更新时间：.*?\n/, '')
+      .replace(/题目日期：.*?\n/, '')
+      .replace(/题号：.*?\n/, '')
+      .trim();
+
+    navigator.clipboard.writeText(text).then(() => {
+      alert('已复制本条答案到剪贴板');
+    }).catch(() => {
+      alert('复制失败，请手动选中复制');
+    });
+  }
+</script>
+
+</body>
+</html>

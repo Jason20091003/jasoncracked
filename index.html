@@ -93,6 +93,11 @@
             background: linear-gradient(135deg, #43e97b, #38f9d7);
         }
         
+        /* 新增的每日答案卡片專用漸層（放在第一個位置時會自動套用原本的第一個漸層） */
+        .tool-card:nth-child(5) .tool-icon {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);  /* 可自行調整顏色 */
+        }
+        
         .tool-name {
             font-size: 24px;
             font-weight: 700;
@@ -147,7 +152,16 @@
         </header>
         
         <div class="tools-grid">
-            <!-- 词典工具 -->
+
+            <!-- 新增：每日题目答案（放在最前面） -->
+            <a href="daily-answer/" class="tool-card">
+                <div class="tool-icon">📅</div>
+                <div class="tool-name">AP物理每日题目答案</div>
+                <div class="tool-desc">每天更新的题目参考答案</div>
+                <span class="tool-tag">每日更新</span>
+            </a>
+            
+            <!-- 詞典工具（原第一個） -->
             <a href="dict/" class="tool-card">
                 <div class="tool-icon">📚</div>
                 <div class="tool-name">JL 词典</div>
@@ -178,6 +192,7 @@
                 <div class="tool-desc">文本与 DNA 序列互转，支持二进制编码解码</div>
                 <span class="tool-tag">编码工具</span>
             </a>
+
         </div>
         
         <footer>
